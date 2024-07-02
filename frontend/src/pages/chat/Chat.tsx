@@ -16,21 +16,25 @@ import { SpeechConfig, AudioConfig, SpeechSynthesizer, ResultReason } from "micr
 import { getFileType } from "../../utils/functions";
 import { darkContext } from "../context/darkMode";
 
-const userLanguage = navigator.language;
-let error_message_text = "";
-if (userLanguage.startsWith("pt")) {
-    error_message_text = "Desculpe, tive um problema técnico com a solicitação. Por favor informar o erro a equipe de suporte. ";
-} else if (userLanguage.startsWith("es")) {
-    error_message_text = "Lo siento, yo tuve un problema con la solicitud. Por favor informe el error al equipo de soporte. ";
-} else {
-    error_message_text = "I'm sorry, I had a problem with the request. Please report the error to the support team. ";
-}
+// const language = navigator.language;
+// let error_message_text = "";
+
+// if (language.startsWith("pt")) {
+//     error_message_text = "Desculpe, tive um problema técnico com a solicitação. Por favor informar o erro a equipe de suporte. ";
+  
+// } else if (language.startsWith("es")) {
+//     error_message_text = "Lo siento, yo tuve un problema con la solicitud. Por favor informe el error al equipo de soporte. ";
+  
+// } else {
+//     error_message_text = "I'm sorry, I had a problem with the request. Please report the error to the support team. ";
+  
+// }
 
 const Chat = () => {
     // speech synthesis is disabled by default
     const speechSynthesisEnabled = false;
 
-    const [placeholderText, setPlaceholderText] = useState("");
+    const [placeholderText, setPlaceholderText] = useState("Write your question here");
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -161,15 +165,15 @@ const Chat = () => {
             triggered.current = true;
             console.log(triggered.current);
         }
-        const language = navigator.language;
-        if (language.startsWith("pt")) {
-            setPlaceholderText("Escreva aqui sua pergunta");
-        }
-        if (language.startsWith("es")) {
-            setPlaceholderText("Escribe tu pregunta aqui");
-        } else {
-            setPlaceholderText("Write your question here");
-        }
+        // const language = navigator.language;
+        // if (language.startsWith("pt")) {
+        //     setPlaceholderText("Escreva aqui sua pergunta");
+        // }
+        // if (language.startsWith("es")) {
+        //     setPlaceholderText("Escribe tu pregunta aqui");
+        // } else {
+        //     setPlaceholderText("Write your question here");
+        // }
     }, [isLoading]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
@@ -244,18 +248,58 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
-    const preguntas = [
-        "¿Tenemos productos de pasarelas de pago?"
-        ,"¿La compañía tiene soluciones para empresas facturadoras?"
-        ,"¿Qué aplicaciones y servicios posee la compañía?"
-        ,"¿Cómo puedo enviar dinero a otra persona usando ATH Móvil?"
-    ]
+    // const preguntas = [
+    //     "¿Tenemos productos de pasarelas de pago?"
+    //     ,"¿La compañía tiene soluciones para empresas facturadoras?"
+    //     ,"¿Qué aplicaciones y servicios posee la compañía?"
+    //     ,"¿Cómo puedo enviar dinero a otra persona usando ATH Móvil?"
+    // ]
 
     const {starter, setStarter} = useContext(darkContext)
+
     const handleStarter = (start:string) =>{
         setStarter(start)
     }
     const {isDark,setIsDark} = useContext(darkContext)
+
+    const {userLanguage,setLanguage} = useContext(darkContext)
+    const [preguntas,setPreguntas] = useState([ "Do we have payment gateway products?",
+        "Does the company have solutions for billing companies?",
+        "What applications and services does the company have?",
+        "How can I send money to another person using ATH Móvil?"])
+    const [error_message_text,setErrorMessage] = useState("I'm sorry, I had a problem with the request. Please report the error to the support team. ")
+
+    useEffect(()=>{
+        if (userLanguage === "es"){
+            setErrorMessage("Lo siento, yo tuve un problema con la solicitud. Por favor informe el error al equipo de soporte. ")
+            setPlaceholderText("Escribe tu pregunta aqui");
+            setPreguntas([
+                "¿Tenemos productos de pasarelas de pago?"
+                ,"¿La compañía tiene soluciones para empresas facturadoras?"
+                ,"¿Qué aplicaciones y servicios posee la compañía?"
+                ,"¿Cómo puedo enviar dinero a otra persona usando ATH Móvil?"
+            ])
+        }
+        else if (userLanguage ==="pt"){
+            setErrorMessage("Desculpe, tive um problema técnico com a solicitação. Por favor informar o erro a equipe de suporte. ")
+            setPlaceholderText("Escreva aqui sua pergunta");
+            setPreguntas([
+                "Temos produtos de gateway de pagamento?",
+                "A empresa possui soluções para empresas de faturamento?",
+                "Quais aplicações e serviços a empresa possui?",
+                "Como posso enviar dinheiro para outra pessoa usando ATH Móvil?"
+            ])
+        }
+        else if (userLanguage === "en"){
+            setErrorMessage("I'm sorry, I had a problem with the request. Please report the error to the support team. ")
+            setPlaceholderText("Write your question here");
+            setPreguntas([ "Do we have payment gateway products?",
+                "Does the company have solutions for billing companies?",
+                "What applications and services does the company have?",
+                "How can I send money to another person using ATH Móvil?"])
+        }
+    },[userLanguage])
+    
 
 
     return (
