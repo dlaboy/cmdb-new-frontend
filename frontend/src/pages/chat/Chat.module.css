@@ -12,6 +12,8 @@
     /* background-color: #292929; */
     /* background-color: #181818; */
     background-color: #ffffff;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .containerDark {
@@ -26,9 +28,12 @@
     /* padding-top: 20px; */
     background-color: #292929;
     /* background-color: #181818; */
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .wrapperContainerDark{
+    transition: background-color 0.5s ease-in-out;
     
     background-color: #181818;
     height: 100%;
@@ -40,6 +45,7 @@
 }
 .wrapperContainer{
 
+    transition: background-color 0.5s ease-in-out;
 
     /* background-color: #181818; */
 

@@ -25,7 +25,7 @@
     height: 90px;
     width: 100%;
     padding: 15px;
-    background: white;
+    background-color: white;
     border-width: 3px;
     border-left: 0px;
     border-right: 0px;
@@ -35,7 +35,7 @@
     border-image-slice: 1;
     border-image-source: linear-gradient(45deg, orangered, yellow);
     border-radius: 8px ;
-
+    transition: background-color 0.5s ease-in-out;
     /* background-color: #292929; */
 
 }
@@ -45,7 +45,8 @@
     width: 100%;
     padding: 15px;
     /* background: white; */
-    background-color: #292929;
+    background-color: #393939;
+    transition: background-color 0.5s ease-in-out;
     
     border-width: 3px;
     border-left: 0px;

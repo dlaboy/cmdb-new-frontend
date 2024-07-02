@@ -20,19 +20,19 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
 
     const [triggerStarter,setTrigger] = useState(0)
     
-    useEffect(()=>{
-        if(starter !== ""){
-            setQuestion(starter)
-            setTrigger(prev => prev + 1)
-        }  
-    },[starter])
+    // useEffect(()=>{
+    //     if(starter !== ""){
+    //         setQuestion(starter)
+    //         setTrigger(prev => prev + 1)
+    //     }  
+    // },[starter])
 
-    useEffect(()=>{
-        onSend(question)
-        if (clearOnSend) {
-            setQuestion("");
-        }
-    },[triggerStarter])
+    // useEffect(()=>{
+    //     onSend(question)
+    //     if (clearOnSend) {
+    //         setQuestion("");
+    //     }
+    // },[triggerStarter])
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
             return;
@@ -102,8 +102,10 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         <Stack horizontal className={`${isDark ? styles.questionInputContainer:styles.questionInputContainerDark }`}>
             <TextField
                    style={{
-                    backgroundColor: isDark ? '#fff' : '#292929',
+                    backgroundColor: isDark ? '#fff' : '#393939',
                     color: isDark ? '#292929' : '#fff',
+                    transition: 'background-color 0.5s ease-in-out'
+
                 }}
                 className={styles.questionInputTextArea}
                 placeholder={placeholder}
@@ -120,7 +122,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                         aria-label="Boton hacer preguntas"
                         onClick={sendQuestion}
                     >
-                        <Send28Filled primaryFill="grey" />
+                        <Send28Filled primaryFill="yellow" />
                     </div>
                     {/* <div
                         className={`${styles.questionInputSendButton}}`}

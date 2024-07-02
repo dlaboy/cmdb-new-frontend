@@ -23,9 +23,13 @@
     /* right: 0; */
     /* background-color: red; */
     background-color: #ffffff;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .historyDark{
+    transition: background-color 0.5s ease-in-out;
+
     /* width: 25vw; */
     height: 100%;
     display: flex;
@@ -50,6 +54,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
     /* z-index: 1; */
     /* position: absolute; */
     /* right: 0; */
@@ -80,10 +85,14 @@
 .header {
     background-color: #f0f0f0;
     color: #f2f2f2;
+    transition: background-color 0.5s ease-in-out;
+
 }
 .headerDark {
-    background-color: #292929;
+    /* background-color: #292929; */
     background-color: #181818;
+    transition: background-color 0.5s ease-in-out;
+
 
     color: #f2f2f2;
 }
@@ -91,6 +100,8 @@
     background-color: transparent;
     color: grey;
     cursor: pointer;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .settingTabContainer{
@@ -117,11 +128,14 @@
     border-style: solid;
     border-width: 1px;
     color: black;
+    transition: background-color 0.5s ease-in-out;
 
     
 
 }
 .settingsTabDark{
+    transition: background-color 0.5s ease-in-out;
+
     /* height: 15vh; */
     /* width: 12vw;  */
     position: absolute;
@@ -145,6 +159,8 @@
     /* padding-left: 10px; */
     display: flex;
     flex-direction: column;
+    transition: background-color 0.5s ease-in-out;
+
     /* padding: 10px; */
     
 }
@@ -152,12 +168,16 @@
     gap: 10px;
     background-color: #dedede;
     width: 100%;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .themeOptionsDark{
     gap: 10px;
     background-color: #181818;
     width: 100%;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 
@@ -182,6 +202,8 @@
     justify-content: start;
     align-items: center;
     cursor: pointer;
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .settingLink, .themeLink{
@@ -193,10 +215,14 @@
 .settingOption:hover{
     background-color:  #dddddd;
  
+    transition: background-color 0.5s ease-in-out;
+
 
 }
 .settingOptionDark:hover{
     background-color:  #464646;
+    transition: background-color 0.5s ease-in-out;
+
  
 
 }
