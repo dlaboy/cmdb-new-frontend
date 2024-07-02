@@ -266,7 +266,7 @@ const Chat = () => {
     const [preguntas,setPreguntas] = useState([ "Do we have payment gateway products?",
         "Does the company have solutions for billing companies?",
         "What applications and services does the company have?",
-        "How can I send money to another person using ATH Móvil?"])
+        "What services are located in Brazil?"])
     const [error_message_text,setErrorMessage] = useState("I'm sorry, I had a problem with the request. Please report the error to the support team. ")
 
     useEffect(()=>{
@@ -277,7 +277,7 @@ const Chat = () => {
                 "¿Tenemos productos de pasarelas de pago?"
                 ,"¿La compañía tiene soluciones para empresas facturadoras?"
                 ,"¿Qué aplicaciones y servicios posee la compañía?"
-                ,"¿Cómo puedo enviar dinero a otra persona usando ATH Móvil?"
+                ,"¿Qué servicios están localizados en Brasil?"
             ])
         }
         else if (userLanguage ==="pt"){
@@ -287,7 +287,7 @@ const Chat = () => {
                 "Temos produtos de gateway de pagamento?",
                 "A empresa possui soluções para empresas de faturamento?",
                 "Quais aplicações e serviços a empresa possui?",
-                "Como posso enviar dinheiro para outra pessoa usando ATH Móvil?"
+                "Quais serviços estão localizados no Brasil?"
             ])
         }
         else if (userLanguage === "en"){
@@ -296,7 +296,7 @@ const Chat = () => {
             setPreguntas([ "Do we have payment gateway products?",
                 "Does the company have solutions for billing companies?",
                 "What applications and services does the company have?",
-                "How can I send money to another person using ATH Móvil?"])
+                "What services are located in Brazil?"])
         }
     },[userLanguage])
     
@@ -327,18 +327,18 @@ const Chat = () => {
                             <h1 className={styles.chatEmptyStateTitle}>Dummy Text</h1>
                             <h1 className={styles.chatEmptyStateTitle}>Dummy Text</h1> */}
                             
-                            {/* <div className={styles.conversationStartersOptions}>
+                            <div className={styles.conversationStartersOptions}>
                                     <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[0])}>{preguntas[0]}</div>
                                     <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[1])}>{preguntas[1]}</div>
                                     <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[2])}>{preguntas[2]}</div>
                                     <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[3])}>{preguntas[3]}</div>
-                                </div> */}
-                                <div className={styles.conversationStartersOptions}>
+                                </div>
+                                {/* <div className={styles.conversationStartersOptions}>
                                     <div className={styles.conversationStarterOption}>{preguntas[0]}</div>
                                     <div className={styles.conversationStarterOption} >{preguntas[1]}</div>
                                     <div className={styles.conversationStarterOption} >{preguntas[2]}</div>
                                     <div className={styles.conversationStarterOption} >{preguntas[3]}</div>
-                                </div>
+                                </div> */}
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>

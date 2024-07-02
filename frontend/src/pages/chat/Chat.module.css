@@ -13,25 +13,28 @@
     /* background-color: #181818; */
     background-color: #ffffff;
     transition: background-color 0.5s ease-in-out;
+    overflow-y: scroll;
+
 
 
 }
 .containerDark {
     /* flex: 1; */
     padding-top: 2rem;
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
     display: flex;
     flex-direction: column;
 
     width: 95%;
-    /* height: 95%; */
-    min-height: 95vh;
+    height: 95%;
+    /* min-height: 95vh; */
 
     border-radius: 20px;
     /* padding-top: 20px; */
     background-color: #292929;
     /* background-color: #181818; */
     transition: background-color 0.5s ease-in-out;
+    overflow-y: scroll;
 
 
 }
@@ -39,7 +42,7 @@
     transition: background-color 0.5s ease-in-out;
     
     background-color: #181818;
-    /* min-height: 100vh; */
+    height: 100%;
     width: 100%;
     display: flex;
     justify-content: center;
