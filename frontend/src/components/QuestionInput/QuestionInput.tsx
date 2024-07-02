@@ -122,7 +122,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                         aria-label="Boton hacer preguntas"
                         onClick={sendQuestion}
                     >
-                        <Send28Filled primaryFill="yellow" />
+                        <Send28Filled primaryFill="goldenrod" />
                     </div>
                     {/* <div
                         className={`${styles.questionInputSendButton}}`}
