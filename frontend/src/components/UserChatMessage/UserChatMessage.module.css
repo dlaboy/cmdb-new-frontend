@@ -6,9 +6,24 @@
     margin-left: auto;
 }
 
-.message {
+/* .message {
     padding: 20px;
     background: #e8ebfa;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: transparent solid 1px;
+} */
+.message {
+    padding: 20px;
+    background: #ffcfa9;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: transparent solid 1px;
+}
+.messageDark {
+    padding: 20px;
+    background-color: #4e2300;
+    color: lightgray;
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
     outline: transparent solid 1px;

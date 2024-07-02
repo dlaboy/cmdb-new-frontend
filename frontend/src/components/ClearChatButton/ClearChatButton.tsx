@@ -1,5 +1,5 @@
 import { Text } from "@fluentui/react";
-import { Delete24Regular } from "@fluentui/react-icons";
+import { Delete24Regular, Broom28Filled } from "@fluentui/react-icons";
 
 import styles from "./ClearChatButton.module.css";
 
@@ -22,8 +22,9 @@ if (userLanguage.startsWith('pt')) {
 export const ClearChatButton = ({ className, disabled, onClick }: Props) => {
     return (
         <div className={`${styles.container} ${className ?? ""} ${disabled && styles.disabled}`} onClick={onClick}>
-            <Delete24Regular />
-            <Text>{reiniciar_text}</Text>
+            {/* <Delete24Regular /> */}
+            <Broom28Filled primaryFill="grey"/>
+            {/* <Text>{reiniciar_text}</Text> */}
         </div>
     );
 };

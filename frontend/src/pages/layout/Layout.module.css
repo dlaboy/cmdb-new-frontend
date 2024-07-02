@@ -1,18 +1,238 @@
+.layoutContainer{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    max-width: 100vw;
+    /* width: 100%; */
+    justify-content: center;
+    align-items: center;
+
+
+}
+.history{
+    /* width: 25vw; */
+
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    /* z-index: 1; */
+    /* position: absolute; */
+    /* right: 0; */
+    /* background-color: red; */
+    background-color: #ffffff;
+
+}
+.historyDark{
+    /* width: 25vw; */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* z-index: 1; */
+    /* position: absolute; */
+    /* right: 0; */
+    /* background-color: red; */
+    background-color: #292929;
+    border-color: #464646;
+    border-style: solid;
+    border-width: 1px;
+
+}
+.conversationHistory{
+    /* width: 35vw; */
+    /* z-index: 2; */
+    height: 100vh;
+    color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* z-index: 1; */
+    /* position: absolute; */
+    /* right: 0; */
+    /* background-color: red; */
+    /* background-color: #ffffff; */
+
+}
+
+.conversationHistoryHide{
+    display: none;
+    /* width: 30vw;
+    height: 100vh;
+    z-index: 1;
+    position: absolute;
+    right: 0; */
+    /* background-color: red; */
+}
 .layout {
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
+}
+.title{
+    color: grey;
 }
 
 .header {
-    background-color: #FFFFFF;
+    background-color: #f0f0f0;
     color: #f2f2f2;
 }
+.headerDark {
+    background-color: #292929;
+    background-color: #181818;
+
+    color: #f2f2f2;
+}
+.darkToggle {
+    background-color: transparent;
+    color: grey;
+    cursor: pointer;
+
+}
+.settingTabContainer{
+    display: flex;
+    width: 100%;
+}
+.settingTabContainer{
+    display: none;    
+}
+.settingsTab{
+    /* height: 15vh; */
+    /* width: 12vw;  */
+    position: absolute;
+    right: 10px;
+    top: 80px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+    border-color: #ffffff;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+
+    
+
+}
+.settingsTabDark{
+    /* height: 15vh; */
+    /* width: 12vw;  */
+    position: absolute;
+    right: 10px;
+    top: 80px;
+    background-color: #292929;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+    border-color: #464646;
+    border-style: solid;
+    border-width: 1px;
+
+    
+
+}
+.settingsOptions, .themeOptions, .themeOptionsDark{
+    /* padding-left: 10px; */
+    display: flex;
+    flex-direction: column;
+    /* padding: 10px; */
+    
+}
+.themeOptions{
+    gap: 10px;
+    background-color: #dedede;
+    width: 100%;
+
+}
+.themeOptionsDark{
+    gap: 10px;
+    background-color: #181818;
+    width: 100%;
+
+}
+
+.themeOptionsContainer,.langOptionsContainer{
+    display: flex;
+    width: 100%;
+
+    /* gap: 10px;
+    background-color: #181818; */
+}
+.themeOptionsContainerHide,.langOptionsContainerHide{
+    display: none;
+    width: 100%;
+    /* gap: 10px;
+    background-color: #181818; */
+}
+
+.settingOption, .themeOption, .settingOptionDark {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+
+}
+.settingLink, .themeLink{
+    padding-left: 10px;
+    text-decoration: none;
+    color: grey;
+}
+/*  */
+.settingOption:hover{
+    background-color:  #dddddd;
+ 
+
+}
+.settingOptionDark:hover{
+    background-color:  #464646;
+ 
+
+}
+.commandButton {
+    cursor: pointer;
+    /* border-color: rgb(66, 66, 66);
+    border-width: 2px;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-style: solid;
+    padding-right: 3rem; */
+
+}
+
+
+.settingsContainer{
+    display: flex;
+    flex-direction: column;
+    margin-left: 80px;
+    cursor: pointer;
+    /* position: absolute; */
+}
+.leftContainer{
+    display: flex;
+    flex-direction: row;
+}
+/* .evertecHeader{
+    background-color: red;
+} */
 
 .headerContainer {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    /* background-color: red; */
+    justify-content: space-between;
     margin-right: 12px;
     margin-left: 12px;
 }
@@ -20,7 +240,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    /* margin-right: 40px; */
     color: #f2f2f2;
     text-decoration: none;
 }
@@ -30,7 +250,7 @@
 }
 
 .headerTitle {
-    margin-left: 12px;
+    /* margin-left: 12px; */
     font-weight: 600;
 }
 
@@ -65,8 +285,10 @@
 
 .headerRightText {
     font-weight: normal;
-    margin-left: 40px;
-    color:  #002f87;
+    /* margin-left: 40px; */
+    /* color:  #002f87; */
+    color:  #6e6e6e;
+
 }
 
 .microsoftLogo {
@@ -76,4 +298,15 @@
 
 .githubLogo {
     height: 20px;
+}
+
+.langButton{
+    background-color: transparent;
+    border-width: 0;
+    padding: 10px;
+    color: grey;
+    justify-content: start;
+    align-items: start;
+    padding-left: 20px;
+    cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled, TabDesktopMultipleBottomRegular } from "@fluentui/react-icons";
 
@@ -14,6 +14,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { getTokenOrRefresh } from "../../components/QuestionInput/token_util";
 import { SpeechConfig, AudioConfig, SpeechSynthesizer, ResultReason } from "microsoft-cognitiveservices-speech-sdk";
 import { getFileType } from "../../utils/functions";
+import { darkContext } from "../context/darkMode";
 
 const userLanguage = navigator.language;
 let error_message_text = "";
@@ -243,18 +244,39 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+    const preguntas = [
+        "¿Tenemos productos de pasarelas de pago?"
+        ,"¿La compañía tiene soluciones para empresas facturadoras?"
+        ,"¿Qué aplicaciones y servicios posee la compañía?"
+        ,"¿Cómo puedo enviar dinero a otra persona usando ATH Móvil?"
+    ]
+
+    const {starter, setStarter} = useContext(darkContext)
+    const handleStarter = (start:string) =>{
+        setStarter(start)
+    }
+    const {isDark,setIsDark} = useContext(darkContext)
+
 
     return (
-        <div className={styles.container}>
-            <div className={styles.commandsContainer}>
+        <div className={`${isDark ? styles.wrapperContainer:styles.wrapperContainerDark }`}>
+
+        <div className={`${isDark ? styles.container:styles.containerDark }`}>
+            {/* <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-            </div>
+            </div> */}
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            {/*<SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Conversación con datos</h1>*/}
+                            {/* <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" /> */}
+                            <h1 className={styles.chatEmptyStateTitle}>Products Navigator Copilot</h1>
+                            <div className={styles.conversationStartersOptions}>
+                                    <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[0])}>{preguntas[0]}</div>
+                                    <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[1])}>{preguntas[1]}</div>
+                                    <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[2])}>{preguntas[2]}</div>
+                                    <div className={styles.conversationStarterOption} onClick={()=> handleStarter(preguntas[3])}>{preguntas[3]}</div>
+                                </div>
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -271,7 +293,7 @@ const Chat = () => {
                                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                             onFollowupQuestionClicked={q => makeApiRequestGpt(q)}
                                             showFollowupQuestions={false}
-                                            showSources={true}
+                                            showSources={false}
                                         />
                                     </div>
                                 </div>
@@ -297,6 +319,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
+                        <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                         <QuestionInput clearOnSend placeholder={placeholderText} disabled={isLoading} onSend={question => makeApiRequestGpt(question)} />
                     </div>
                 </div>
@@ -361,6 +384,7 @@ const Chat = () => {
                     />
                 </Panel>
             </div>
+        </div>
         </div>
     );
 };

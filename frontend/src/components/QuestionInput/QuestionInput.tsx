@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Stack, TextField } from "@fluentui/react";
+import { useContext, useEffect, useState } from "react";
+import { Stack, TextField, divProperties } from "@fluentui/react";
 import { getTokenOrRefresh } from './token_util';
 import { Send28Filled, BookOpenMicrophone28Filled, SlideMicrophone32Filled } from "@fluentui/react-icons";
 import { ResultReason, SpeechConfig, AudioConfig, SpeechRecognizer } from 'microsoft-cognitiveservices-speech-sdk';
 
 import styles from "./QuestionInput.module.css";
+import { darkContext } from "../../pages/context/darkMode";
 interface Props {
     onSend: (question: string) => void;
     disabled: boolean;
@@ -14,7 +15,24 @@ interface Props {
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
+    const {starter, setStarter} = useContext(darkContext)
 
+
+    const [triggerStarter,setTrigger] = useState(0)
+    
+    useEffect(()=>{
+        if(starter !== ""){
+            setQuestion(starter)
+            setTrigger(prev => prev + 1)
+        }  
+    },[starter])
+
+    useEffect(()=>{
+        onSend(question)
+        if (clearOnSend) {
+            setQuestion("");
+        }
+    },[triggerStarter])
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
             return;
@@ -78,9 +96,15 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
 
     const sendQuestionDisabled = disabled || !question.trim();
 
+    const {isDark, setIsDark} = useContext(darkContext)
+
     return (
-        <Stack horizontal className={styles.questionInputContainer}>
+        <Stack horizontal className={`${isDark ? styles.questionInputContainer:styles.questionInputContainerDark }`}>
             <TextField
+                   style={{
+                    backgroundColor: isDark ? '#fff' : '#292929',
+                    color: isDark ? '#292929' : '#fff',
+                }}
                 className={styles.questionInputTextArea}
                 placeholder={placeholder}
                 multiline
@@ -91,21 +115,22 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                 onKeyDown={onEnterPress}
             />
             <div className={styles.questionInputButtonsContainer}>
-                <div
-                    className={`${styles.questionInputSendButton} ${sendQuestionDisabled ? styles.questionInputSendButtonDisabled : ""}`}
-                    aria-label="Boton hacer preguntas"
-                    onClick={sendQuestion}
-                >
-                    <Send28Filled primaryFill="rgba(115, 118, 225, 1)" />
-                </div>
-                <div
-                    className={`${styles.questionInputSendButton}}`}
-                    aria-label="Boton hablar"
-                    onClick={sttFromMic}
-                >
-                    <SlideMicrophone32Filled primaryFill="rgba(115, 118, 225, 1)" />
-                </div>
-            </div>
+                    <div
+                        className={`${styles.questionInputSendButton} ${sendQuestionDisabled ? styles.questionInputSendButtonDisabled : ""}`}
+                        aria-label="Boton hacer preguntas"
+                        onClick={sendQuestion}
+                    >
+                        <Send28Filled primaryFill="grey" />
+                    </div>
+                    {/* <div
+                        className={`${styles.questionInputSendButton}}`}
+                        aria-label="Boton hablar"
+                        onClick={sttFromMic}
+                    >
+                        <SlideMicrophone32Filled primaryFill="rgba(115, 118, 225, 1)" />
+                    </div> */}
+             </div>
+     
         </Stack>
     );
 };

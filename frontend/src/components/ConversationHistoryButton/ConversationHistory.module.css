@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: grey;
+    /* background-color: red; */
+
+}
+
+.disabled {
+    opacity: 0.4;
+}
