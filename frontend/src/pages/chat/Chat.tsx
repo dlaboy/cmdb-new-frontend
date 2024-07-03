@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import {Dialog, DialogType, Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import {Dialog, DialogType, Checkbox, Panel, DefaultButton, TextField, SpinButton, CommandBarButton } from "@fluentui/react";
 import { SparkleFilled, TabDesktopMultipleBottomRegular } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
@@ -203,15 +203,7 @@ const Chat = () => {
         }
     };
 
-    const clearChat = () => {
-        console.log("file is" + fileType);
-        lastQuestionRef.current = "";
-        error && setError(undefined);
-        setActiveCitation(undefined);
-        setActiveAnalysisPanelTab(undefined);
-        setAnswers([]);
-        setUserId("");
-    };
+ 
 
     /**Get Pdf */
     const getPdf = async (pdfName: string) => {
@@ -381,8 +373,43 @@ const Chat = () => {
                 "What services are located in Brazil?"])
         }
     },[userLanguage])
-    
+    // const disabledButton = () => {
+    //     return (
+    //       isLoading ||
+    //       (messages && messages.length === 0) ||
+    //       clearingChat ||
+    //       appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading
+    //     )
+    //   }
+  const [processMessages, setProcessMessages] = useState<messageStatus>(messageStatus.NotRunning)
 
+  const clearChat = () => {
+    console.log("file is" + fileType);
+    lastQuestionRef.current = "";
+    error && setError(undefined);
+    setActiveCitation(undefined);
+    setActiveAnalysisPanelTab(undefined);
+    setAnswers([]);
+    setUserId("");
+};
+
+    
+    const newChat = () => {
+        setProcessMessages(messageStatus.Processing)
+        error && setError(undefined);
+        setActiveCitation(undefined);
+        setActiveAnalysisPanelTab(undefined);
+        setAnswers([]);
+        setUserId("");
+        lastQuestionRef.current = "";
+        setAnswers([]);
+        // setMessages([])
+        // setIsCitationPanelOpen(false)
+        // setIsIntentsPanelOpen(false)
+        // setActiveCitation(undefined)
+        appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null })
+        setProcessMessages(messageStatus.Done)
+      }
 
     return (
         <div className={`${isDark ? styles.wrapperContainer:styles.wrapperContainerDark }`}>
@@ -469,6 +496,32 @@ const Chat = () => {
                   dialogContentProps={errorDialogContentProps}
                   modalProps={modalProps}></Dialog>
                         <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                        {appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured && (
+                  <CommandBarButton
+                    role="button"
+                    styles={{
+                      icon: {
+                        color: '#FFFFFF'
+                      },
+                      iconDisabled: {
+                        color: '#BDBDBD !important'
+                      },
+                      root: {
+                        color: '#FFFFFF',
+                        background:
+                          'radial-gradient(109.81% 107.82% at 100.1% 90.19%, #0F6CBD 33.63%, #2D87C3 70.31%, #8DDDD8 100%)'
+                      },
+                      rootDisabled: {
+                        background: '#F0F0F0'
+                      }
+                    }}
+                    className={styles.newChatIcon}
+                    iconProps={{ iconName: 'Add' }}
+                    onClick={newChat}
+                    disabled={!lastQuestionRef.current || isLoading} 
+                    aria-label="start a new chat button"
+                  />
+                )}
                         <QuestionInput clearOnSend placeholder={placeholderText} disabled={isLoading} onSend={question => makeApiRequestGpt(question)} />
                     </div>
                 </div>
