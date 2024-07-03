@@ -1,39 +1,10 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import {Dialog, DialogType, Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled, TabDesktopMultipleBottomRegular } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
 import { chatApiGpt, Approaches, AskResponse, ChatRequest, ChatRequestGpt, ChatTurn } from "../../api";
-import {
-    ChatMessage,
-    ConversationRequest,
-    conversationApi,
-    Citation,
-    ToolMessageContent,
-    AzureSqlServerExecResults,
-    ChatResponse,
-    getUserInfo,
-    Conversation,
-    historyGenerate,
-    historyUpdate,
-    historyClear,
-    ChatHistoryLoadingState,
-    CosmosDBStatus,
-    ErrorMessage,
-    ExecResults,
-  } from "../../api";
-  import { ChatHistoryPanel } from "../../components/ChatHistory/ChatHistoryPanel";
-  import { AppStateContext } from "../../state/AppProvider";
-  import { useBoolean } from "@fluentui/react-hooks";
-  
-
-  const enum messageStatus {
-    NotRunning = 'Not Running',
-    Processing = 'Processing',
-    Done = 'Done'
-  }
-
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -44,7 +15,6 @@ import { getTokenOrRefresh } from "../../components/QuestionInput/token_util";
 import { SpeechConfig, AudioConfig, SpeechSynthesizer, ResultReason } from "microsoft-cognitiveservices-speech-sdk";
 import { getFileType } from "../../utils/functions";
 import { darkContext } from "../context/darkMode";
-
 
 // const language = navigator.language;
 // let error_message_text = "";
@@ -61,12 +31,9 @@ import { darkContext } from "../context/darkMode";
 // }
 
 const Chat = () => {
-
     // speech synthesis is disabled by default
     const speechSynthesisEnabled = false;
-    const appStateContext = useContext(AppStateContext)
-    const ui = appStateContext?.state.frontendSettings?.ui
-    const AUTH_ENABLED = appStateContext?.state.frontendSettings?.auth_enabled
+
     const [placeholderText, setPlaceholderText] = useState("Write your question here");
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -92,55 +59,6 @@ const Chat = () => {
     const [userId, setUserId] = useState<string>("");
     const triggered = useRef(false);
 
-    const [errorMsg, setErrorMsg] = useState<ErrorMessage | null>()
-
-
-    const errorDialogContentProps = {
-        type: DialogType.close,
-        title: errorMsg?.title,
-        closeButtonAriaLabel: 'Close',
-        subText: errorMsg?.subtitle
-      }
-    
-      const modalProps = {
-        titleAriaId: 'labelId',
-        subtitleAriaId: 'subTextId',
-        isBlocking: true,
-        styles: { main: { maxWidth: 450 } }
-      }
-
-    const [hideErrorDialog, { toggle: toggleErrorDialog }] = useBoolean(true)
-
-    const handleErrorDialogClose = () => {
-        toggleErrorDialog()
-        setTimeout(() => {
-          setErrorMsg(null)
-        }, 500)
-    }
-    
-    useEffect(() => {
-        setIsLoading(appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading)
-    }, [appStateContext?.state.chatHistoryLoadingState])
-    useEffect(() => {
-        console.log(appStateContext?.state.isCosmosDBAvailable?.status)
-        if (
-          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.Working &&
-          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured &&
-          appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Fail &&
-          hideErrorDialog
-        ) {
-          let subtitle = `${appStateContext.state.isCosmosDBAvailable.status}. Please contact the site administrator.`
-          setErrorMsg({
-            title: 'Chat history is not enabled',
-            subtitle: subtitle
-          })
-          toggleErrorDialog()
-        }
-        else {
-            console.log("IDK")
-        }
-      }, [appStateContext?.state.isCosmosDBAvailable])
-    
     const makeApiRequestGpt = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -463,11 +381,6 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                    <Dialog
-                  hidden={hideErrorDialog}
-                  onDismiss={handleErrorDialogClose}
-                  dialogContentProps={errorDialogContentProps}
-                  modalProps={modalProps}></Dialog>
                         <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                         <QuestionInput clearOnSend placeholder={placeholderText} disabled={isLoading} onSend={question => makeApiRequestGpt(question)} />
                     </div>

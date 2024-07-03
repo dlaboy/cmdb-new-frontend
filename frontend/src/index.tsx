@@ -11,8 +11,6 @@ import Chat from "./pages/chat/Chat";
 
 import { darkContext } from "./pages/context/darkMode";
 
-import { AppStateProvider } from './state/AppProvider'
-
 initializeIcons();
 
 export default function App() {
@@ -28,9 +26,12 @@ export default function App() {
   const lastQuestionRef = useRef<string>("");
 
 
-    return (
-        <AppStateProvider>
+  
 
+
+
+    
+    return (
         <darkContext.Provider value={{lastQuestionRef,isLoading,setIsLoading,file,setFile,isDark,setIsDark, seeCH,setSeeCH,userLanguage,setLanguage,starter,setStarter}}>
             <HashRouter>
                 <Routes>
@@ -41,8 +42,6 @@ export default function App() {
                 </Routes>
             </HashRouter>
         </darkContext.Provider>
-        </AppStateProvider>
-
     );
 }
 
