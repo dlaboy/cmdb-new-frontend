@@ -1,6 +1,30 @@
-import { useRef, useState, useEffect, useContext } from "react";
+import { useRef, useState, useEffect, useContext, useLayoutEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled, TabDesktopMultipleBottomRegular } from "@fluentui/react-icons";
+import { CommandBarButton, IconButton, Dialog, DialogType, Stack } from '@fluentui/react'
+
+// import { isEmpty } from 'lodash'
+import uuid from 'react-uuid'
+
+
+import {
+    ChatMessage,
+    ConversationRequest,
+    conversationApi,
+    Citation,
+    ToolMessageContent,
+    AzureSqlServerExecResults,
+    ChatResponse,
+    getUserInfo,
+    Conversation,
+    historyGenerate,
+    historyUpdate,
+    historyClear,
+    ChatHistoryLoadingState,
+    CosmosDBStatus,
+    ErrorMessage,
+    ExecResults,
+  } from "../../api";
 
 import styles from "./Chat.module.css";
 
@@ -16,6 +40,17 @@ import { SpeechConfig, AudioConfig, SpeechSynthesizer, ResultReason } from "micr
 import { getFileType } from "../../utils/functions";
 import { darkContext } from "../context/darkMode";
 
+
+import { ChatHistoryPanel } from "../../components/ChatHistory/ChatHistoryPanel";
+import { AppStateContext } from "../../state/AppProvider";
+import { useBoolean } from "@fluentui/react-hooks";
+
+
+const enum messageStatus {
+    NotRunning = 'Not Running',
+    Processing = 'Processing',
+    Done = 'Done'
+  }
 // const language = navigator.language;
 // let error_message_text = "";
 
@@ -33,6 +68,35 @@ import { darkContext } from "../context/darkMode";
 const Chat = () => {
     // speech synthesis is disabled by default
     const speechSynthesisEnabled = false;
+    const appStateContext = useContext(AppStateContext)
+    const ui = appStateContext?.state.frontendSettings?.ui
+    const AUTH_ENABLED = appStateContext?.state.frontendSettings?.auth_enabled
+    const [showLoadingMessage, setShowLoadingMessage] = useState<boolean>(false)
+    const [isCitationPanelOpen, setIsCitationPanelOpen] = useState<boolean>(false)
+    const [isIntentsPanelOpen, setIsIntentsPanelOpen] = useState<boolean>(false)
+    const abortFuncs = useRef([] as AbortController[])
+    const [showAuthMessage, setShowAuthMessage] = useState<boolean | undefined>()
+    const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [execResults, setExecResults] = useState<ExecResults[]>([])
+    const [processMessages, setProcessMessages] = useState<messageStatus>(messageStatus.NotRunning)
+    const [clearingChat, setClearingChat] = useState<boolean>(false)
+    const [hideErrorDialog, { toggle: toggleErrorDialog }] = useBoolean(true)
+    const [errorMsg, setErrorMsg] = useState<ErrorMessage | null>()
+
+    
+    const errorDialogContentProps = {
+        type: DialogType.close,
+        title: errorMsg?.title,
+        closeButtonAriaLabel: 'Close',
+        subText: errorMsg?.subtitle
+      }
+    
+      const modalProps = {
+        titleAriaId: 'labelId',
+        subtitleAriaId: 'subTextId',
+        isBlocking: true,
+        styles: { main: { maxWidth: 450 } }
+      }
 
     const [placeholderText, setPlaceholderText] = useState("Write your question here");
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -42,6 +106,89 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (
+          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.Working &&
+          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured &&
+          appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Fail &&
+          hideErrorDialog
+        ) {
+          let subtitle = `${appStateContext.state.isCosmosDBAvailable.status}. Please contact the site administrator.`
+          setErrorMsg({
+            title: 'Chat history is not enabled',
+            subtitle: subtitle
+          })
+          toggleErrorDialog()
+        }
+      }, [appStateContext?.state.isCosmosDBAvailable])
+
+      const handleErrorDialogClose = () => {
+        toggleErrorDialog()
+        setTimeout(() => {
+          setErrorMsg(null)
+        }, 500)
+      }
+    
+      useEffect(() => {
+        setIsLoading(appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Loading)
+      }, [appStateContext?.state.chatHistoryLoadingState])
+    
+      const getUserInfoList = async () => {
+        if (!AUTH_ENABLED) {
+          setShowAuthMessage(false)
+          return
+        }
+        const userInfoList = await getUserInfo()
+        if (userInfoList.length === 0 && window.location.hostname !== '127.0.0.1') {
+          setShowAuthMessage(true)
+        } else {
+          setShowAuthMessage(false)
+        }
+      }
+      
+      const [ASSISTANT, TOOL, ERROR] = ['assistant', 'tool', 'error']
+  const NO_CONTENT_ERROR = 'No content in messages object.'
+
+  let assistantMessage = {} as ChatMessage
+  let toolMessage = {} as ChatMessage
+  let assistantContent = ''
+
+  // const processResultMessage = (resultMessage: ChatMessage, userMessage: ChatMessage, conversationId?: string) => {
+  //   if (resultMessage.content.includes('all_exec_results')) {
+  //     const parsedExecResults = JSON.parse(resultMessage.content) as AzureSqlServerExecResults
+  //     setExecResults(parsedExecResults.all_exec_results)
+  //   }
+
+  //   if (resultMessage.role === ASSISTANT) {
+  //     assistantContent += resultMessage.content
+  //     assistantMessage = resultMessage
+  //     assistantMessage.content = assistantContent
+
+  //     if (resultMessage.context) {
+  //       toolMessage = {
+  //         id: uuid(),
+  //         role: TOOL,
+  //         content: resultMessage.context,
+  //         date: new Date().toISOString()
+  //       }
+  //     }
+  //   }
+
+  //   if (resultMessage.role === TOOL) toolMessage = resultMessage
+
+  //   if (!conversationId) {
+  //     isEmpty(toolMessage)
+  //       ? setMessages([...messages, userMessage, assistantMessage])
+  //       : setMessages([...messages, userMessage, toolMessage, assistantMessage])
+  //   } else {
+  //     isEmpty(toolMessage)
+  //       ? setMessages([...messages, assistantMessage])
+  //       : setMessages([...messages, toolMessage, assistantMessage])
+  //   }
+  // }
+    
+
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -121,16 +268,129 @@ const Chat = () => {
         }
     };
 
-    const clearChat = () => {
-        console.log("file is" + fileType);
-        lastQuestionRef.current = "";
-        error && setError(undefined);
-        setActiveCitation(undefined);
-        setActiveAnalysisPanelTab(undefined);
-        setAnswers([]);
-        setUserId("");
-    };
+    // const clearChat = () => {
+    //     // console.log("file is" + fileType);
+    //     lastQuestionRef.current = "";
+    //     error && setError(undefined);
+    //     setActiveCitation(undefined);
+    //     setActiveAnalysisPanelTab(undefined);
+    //     setAnswers([]);
+    //     setUserId("");
+    //     setStarter("")
+    // };
+    const clearChat = async () => {
+        setClearingChat(true)
+        if (appStateContext?.state.currentChat?.id && appStateContext?.state.isCosmosDBAvailable.cosmosDB) {
+          let response = await historyClear(appStateContext?.state.currentChat.id)
+          if (!response.ok) {
+            setErrorMsg({
+              title: 'Error clearing current chat',
+              subtitle: 'Please try again. If the problem persists, please contact the site administrator.'
+            })
+            toggleErrorDialog()
+          } else {
+            appStateContext?.dispatch({
+              type: 'DELETE_CURRENT_CHAT_MESSAGES',
+              payload: appStateContext?.state.currentChat.id
+            })
+            appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext?.state.currentChat })
+            setActiveCitation(undefined)
+            setIsCitationPanelOpen(false)
+            setIsIntentsPanelOpen(false)
+            setMessages([])
+            lastQuestionRef.current = "";
+            error && setError(undefined);
+            setActiveCitation(undefined);
+            setActiveAnalysisPanelTab(undefined);
+            setAnswers([]);
+            setUserId("");
+          }
+        }
+        else{
+            console.log("No lo se rick")
+        }
+        setClearingChat(false)
+      }
+    
+      
+  const newChat = () => {
+    setProcessMessages(messageStatus.Processing)
+    setMessages([])
+    setIsCitationPanelOpen(false)
+    setIsIntentsPanelOpen(false)
+    setActiveCitation(undefined)
+    appStateContext?.dispatch({ type: 'UPDATE_CURRENT_CHAT', payload: null })
+    setProcessMessages(messageStatus.Done)
+  }
 
+  
+  useEffect(() => {
+    if (appStateContext?.state.currentChat) {
+      setMessages(appStateContext.state.currentChat.messages)
+    } else {
+      setMessages([])
+    }
+  }, [appStateContext?.state.currentChat])
+
+  useLayoutEffect(() => {
+    const saveToDB = async (messages: ChatMessage[], id: string) => {
+      const response = await historyUpdate(messages, id)
+      return response
+    }
+
+    if (appStateContext && appStateContext.state.currentChat && processMessages === messageStatus.Done) {
+      if (appStateContext.state.isCosmosDBAvailable.cosmosDB) {
+        if (!appStateContext?.state.currentChat?.messages) {
+          console.error('Failure fetching current chat state.')
+          return
+        }
+        const noContentError = appStateContext.state.currentChat.messages.find(m => m.role === ERROR)
+
+        if (!noContentError?.content.includes(NO_CONTENT_ERROR)) {
+          saveToDB(appStateContext.state.currentChat.messages, appStateContext.state.currentChat.id)
+            .then(res => {
+              if (!res.ok) {
+                let errorMessage =
+                  "An error occurred. Answers can't be saved at this time. If the problem persists, please contact the site administrator."
+                let errorChatMsg: ChatMessage = {
+                  id: uuid(),
+                  role: ERROR,
+                  content: errorMessage,
+                  date: new Date().toISOString()
+                }
+                if (!appStateContext?.state.currentChat?.messages) {
+                  let err: Error = {
+                    ...new Error(),
+                    message: 'Failure fetching current chat state.'
+                  }
+                  throw err
+                }
+                setMessages([...appStateContext?.state.currentChat?.messages, errorChatMsg])
+              }
+              return res as Response
+            })
+            .catch(err => {
+              console.error('Error: ', err)
+              let errRes: Response = {
+                ...new Response(),
+                ok: false,
+                status: 500
+              }
+              return errRes
+            })
+        }
+      } else {
+      }
+      appStateContext?.dispatch({ type: 'UPDATE_CHAT_HISTORY', payload: appStateContext.state.currentChat })
+      setMessages(appStateContext.state.currentChat.messages)
+      setProcessMessages(messageStatus.NotRunning)
+    }
+  }, [processMessages])
+
+
+  useEffect(() => {
+    if (AUTH_ENABLED !== undefined) getUserInfoList()
+  }, [AUTH_ENABLED])
     /**Get Pdf */
     const getPdf = async (pdfName: string) => {
         /** get file type */
@@ -397,6 +657,11 @@ const Chat = () => {
                         fileType={fileType}
                     />
                 )}
+                <Dialog
+                  hidden={hideErrorDialog}
+                  onDismiss={handleErrorDialogClose}
+                  dialogContentProps={errorDialogContentProps}
+                  modalProps={modalProps}></Dialog>
 
                 <Panel
                     headerText="Configure answer generation"
