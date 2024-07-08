@@ -4,89 +4,17 @@ import github from "../../assets/github.svg";
 import evertec from "../../assets/evertec.png";
 
 import styles from "./Layout.module.css";
+import { useContext, useState } from "react";
 import { darkContext } from "../context/darkMode";
 import { ConversationHistoryButton } from "../../components/ConversationHistoryButton";
-import { useContext, useEffect, useState, useLayoutEffect } from 'react'
-import { Dialog, Stack, TextField } from '@fluentui/react'
-import { CopyRegular } from '@fluentui/react-icons'
 
-import { CosmosDBStatus } from '../../api'
-import Contoso from '../../assets/Contoso.svg'
-import { HistoryButton, ShareButton } from '../../components/common/Button'
-import { AppStateContext } from '../../state/AppProvider'
-import { ChatHistoryPanel } from "../../components/ChatHistory/ChatHistoryPanel";
-import { useBoolean } from "@fluentui/react-hooks";
-
-import {
-    ChatMessage,
-    ConversationRequest,
-    conversationApi,
-    Citation,
-    ToolMessageContent,
-    AzureSqlServerExecResults,
-    ChatResponse,
-    getUserInfo,
-    Conversation,
-    historyGenerate,
-    historyUpdate,
-    historyClear,
-    ChatHistoryLoadingState,
-    ErrorMessage,
-    ExecResults,
-  } from "../../api";
 
 const Layout = () => {
-    const [isSharePanelOpen, setIsSharePanelOpen] = useState<boolean>(false)
-  const [copyClicked, setCopyClicked] = useState<boolean>(false)
-  const [copyText, setCopyText] = useState<string>('Copy URL')
-  const [shareLabel, setShareLabel] = useState<string | undefined>('Share')
-  const [hideHistoryLabel, setHideHistoryLabel] = useState<string>('Hide chat history')
-  const [showHistoryLabel, setShowHistoryLabel] = useState<string>('Show chat history')
-  const appStateContext = useContext(AppStateContext)
-  const ui = appStateContext?.state.frontendSettings?.ui
-  const [hideErrorDialog, { toggle: toggleErrorDialog }] = useBoolean(true)
-
 
     const {isDark,setIsDark} = useContext(darkContext)
     const {seeCH,setSeeCH} = useContext(darkContext)
     const {userLanguage,setLanguage} = useContext(darkContext)
-    const [errorMsg, setErrorMsg] = useState<ErrorMessage | null>()
 
-    useEffect(() => {
-        if (
-          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.Working &&
-          appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured &&
-          appStateContext?.state.chatHistoryLoadingState === ChatHistoryLoadingState.Fail &&
-          hideErrorDialog
-        ) {
-          let subtitle = `${appStateContext.state.isCosmosDBAvailable.status}. Please contact the site administrator.`
-          setErrorMsg({
-            title: 'Chat history is not enabled',
-            subtitle: subtitle
-          })
-          toggleErrorDialog()
-        }
-      }, [appStateContext?.state.isCosmosDBAvailable])
-    
-    useEffect(() => {
-        const handleResize = () => {
-          if (window.innerWidth < 480) {
-            setShareLabel(undefined)
-            setHideHistoryLabel('Hide history')
-            setShowHistoryLabel('Show history')
-          } else {
-            setShareLabel('Share')
-            setHideHistoryLabel('Hide chat history')
-            setShowHistoryLabel('Show chat history')
-          }
-        }
-    
-        window.addEventListener('resize', handleResize)
-        handleResize()
-    
-        return () => window.removeEventListener('resize', handleResize)
-      }, [])
-    
     // Function to change the language
     const changeLanguage = (lang:string) => {
       setLanguage(lang);
@@ -134,35 +62,8 @@ const Layout = () => {
 
         setIsDark(true)
     }
-
-    const handleHistoryClick = () => {
-        appStateContext?.dispatch({ type: 'TOGGLE_CHAT_HISTORY' })
-      }
-
-      
   
 
-    useEffect(() => {}, [appStateContext?.state.isCosmosDBAvailable.status])
-
-    useEffect(() => {
-        const handleResize = () => {
-          if (window.innerWidth < 480) {
-            setShareLabel(undefined)
-            setHideHistoryLabel('Hide history')
-            setShowHistoryLabel('Show history')
-          } else {
-            setShareLabel('Share')
-            setHideHistoryLabel('Hide chat history')
-            setShowHistoryLabel('Show chat history')
-          }
-        }
-    
-        window.addEventListener('resize', handleResize)
-        handleResize()
-    
-        return () => window.removeEventListener('resize', handleResize)
-      }, [])
-      
     const [showLanguages,setShowLanguages] = useState(false)
     const [showTemas, setShowTemas] = useState(false)
     const [showSetting, setShowSetting] = useState(false)
@@ -170,7 +71,7 @@ const Layout = () => {
     const {isLoading,setIsLoading} = useContext(darkContext);
     const {lastQuestionRef} = useContext(darkContext);
 
-    
+
 
     const toggleSettings =() =>{
         setShowSetting(prev => !prev)
@@ -235,16 +136,7 @@ const Layout = () => {
                         </nav> */}
                         {/* <h4 className={styles.headerRightText}>Chat On Your Data</h4> */}
                         <div className={styles.leftContainer}>
-                            
-                            {appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured && (
-                            // <HistoryButton
-                            //     onClick={handleHistoryClick}
-                            //     text={appStateContext?.state?.isChatHistoryOpen ? hideHistoryLabel : showHistoryLabel}
-                            // />
-                            <ConversationHistoryButton  className={styles.commandButton} onClick={handleHistoryClick} />
-
-                            )}
-
+                            <ConversationHistoryButton  className={styles.commandButton} onClick={toggleConversation} disabled={!lastQuestionRef.current || isLoading}/>
                             <div className={styles.settingsContainer}>
                                 <div className="">
                                     <a onClick={toggleSettings}><img src="/setting (1).png" height="30px"  alt="" /></a> 
@@ -294,13 +186,11 @@ const Layout = () => {
 
                 <Outlet />
             </div>
-            {/* <div className={`${seeCH ? styles.conversationHistory:styles.conversationHistoryHide }`}>
+            <div className={`${seeCH ? styles.conversationHistory:styles.conversationHistoryHide }`}>
                 <div className={`${isDark ? styles.history:styles.historyDark }`}>
                        Here You'll See Your Conversation History
                 </div>
-            </div> */}
-            {appStateContext?.state.isChatHistoryOpen &&
-            appStateContext?.state.isCosmosDBAvailable?.status !== CosmosDBStatus.NotConfigured && <ChatHistoryPanel />}
+            </div>
 
         </div>
     );
