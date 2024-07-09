@@ -42,6 +42,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
 
         if (clearOnSend) {
             setQuestion("");
+            setStarter("")
         }
     };
 

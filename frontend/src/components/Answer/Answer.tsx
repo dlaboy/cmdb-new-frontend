@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Stack, IconButton } from "@fluentui/react";
+import ReactMarkdown from 'react-markdown'; 
 import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
@@ -57,7 +58,7 @@ export const Answer = ({
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
-                    <div>
+                    {/* <div>
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "Lightbulb" }}
@@ -66,20 +67,21 @@ export const Answer = ({
                             onClick={() => onThoughtProcessClicked()}
                             disabled={!answer.thoughts}
                         />
-                        {/* <IconButton
+                        <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "ClipboardList" }}
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.data_points.length}
-                        /> */}
-                    </div>
+                        />
+                    </div> */}
                 </Stack>
             </Stack.Item>
 
             <Stack.Item grow>
-                <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div>
+                {/* <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div> */}
+                <div  className={styles.answerText}><ReactMarkdown>{sanitizedAnswerHtml}</ReactMarkdown></div>
             </Stack.Item>
 
             {!!parsedAnswer.citations.length && showSources && (
