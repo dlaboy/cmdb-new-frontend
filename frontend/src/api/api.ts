@@ -1,5 +1,7 @@
 import { AskRequest, AskResponse, AskResponseGpt, ChatRequest, ChatRequestGpt } from "./models";
-
+import {OpenAI } from "openai";
+import Configuration from "openai";
+import { json } from "react-router-dom";
 
 
 export async function chatApiGpt(options: ChatRequestGpt): Promise<AskResponseGpt> {
@@ -32,6 +34,8 @@ export async function chatApiGpt(options: ChatRequestGpt): Promise<AskResponseGp
         throw Error(parsedResponse.error || "Unknown error");
     }
 
+    console.log("Response in api.ts", parsedResponse)
+
     return parsedResponse;
 }
 
@@ -53,3 +57,5 @@ export function getCitationFilePath(citation: string): string {
 
     return `https://${storage_account}.blob.core.windows.net/documents/${citation}`;
 }
+
+

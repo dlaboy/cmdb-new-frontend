@@ -87,6 +87,7 @@ const Chat = () => {
             console.log(result);
             console.log(result.answer);
             setAnswers([...answers, [question, result]]);
+            console.log(answers.length)
             setUserId(result.conversation_id);
 
             // Voice Synthesis
@@ -266,7 +267,7 @@ const Chat = () => {
     const [preguntas,setPreguntas] = useState([ "Do we have payment gateway products?",
         "Does the company have solutions for billing companies?",
         "What applications and services does the company have?",
-        "What services are located in Brazil?"])
+        "What services are located in Costa Rica?"])
     const [error_message_text,setErrorMessage] = useState("I'm sorry, I had a problem with the request. Please report the error to the support team. ")
 
     useEffect(()=>{
@@ -277,7 +278,7 @@ const Chat = () => {
                 "¿Tenemos productos de pasarelas de pago?"
                 ,"¿La compañía tiene soluciones para empresas facturadoras?"
                 ,"¿Qué aplicaciones y servicios posee la compañía?"
-                ,"¿Qué servicios están localizados en Brasil?"
+                ,"¿Qué servicios están localizados en Costa Rica?"
             ])
         }
         else if (userLanguage ==="pt"){
@@ -287,7 +288,7 @@ const Chat = () => {
                 "Temos produtos de gateway de pagamento?",
                 "A empresa possui soluções para empresas de faturamento?",
                 "Quais aplicações e serviços a empresa possui?",
-                "Quais serviços estão localizados no Brasil?"
+                "Quais serviços estão localizados no Costa Rica?"
             ])
         }
         else if (userLanguage === "en"){
@@ -296,7 +297,7 @@ const Chat = () => {
             setPreguntas([ "Do we have payment gateway products?",
                 "Does the company have solutions for billing companies?",
                 "What applications and services does the company have?",
-                "What services are located in Brazil?"])
+                "What services are located in Costa Rica?"])
         }
     },[userLanguage])
     
